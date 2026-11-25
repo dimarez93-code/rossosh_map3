@@ -1,5 +1,22 @@
 <!doctype html>
 <html lang="en">
+    <style>
+    /* Растягиваем карту на весь экран */
+    html, body { height: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: hidden; }
+    #map { height: 100vh !important; width: 100vw !important; position: absolute; top: 0; left: 0; }
+    
+    /* Сдвигаем элементы управления, чтобы они не перекрывались */
+    .ol-zoom { top: 10px !important; left: 10px !important; }
+    .ol-layerswitcher { top: 10px !important; right: 10px !important; }
+    
+    /* Стили для нашего ползунка */
+    #opacity-control {
+        position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+        z-index: 1000; background: rgba(255, 255, 255, 0.9); padding: 8px 15px;
+        border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        display: flex; align-items: center; font-family: sans-serif;
+    }
+</style>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,5 +76,28 @@
         <script src="./layers/layers.js" type="text/javascript"></script> 
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>
+        <div id="opacity-control">
+    <label for="opacity-slider" style="margin-right: 10px; font-size: 14px; font-weight: bold;">Прозрачность:</label>
+    <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="1" style="width: 150px; cursor: pointer;">
+</div>
+
+<script>
+    // Ждем полной загрузки карты
+    window.addEventListener('load', function() {
+        
+        // ВАЖНО: ЗАМЕНИТЕ ЭТИ ИМЕНА НА ТЕ, ЧТО ВЫ НАШЛИ В layers.js!
+        var layer1 = lyr_2_modified_1; 
+        var layer2 = lyr_gx2338Nr062_modifiedjpg_modified_2; 
+
+        var slider = document.getElementById('opacity-slider');
+        
+        slider.addEventListener('input', function(e) {
+            var value = parseFloat(e.target.value);
+            // Меняем прозрачность сразу у обоих слоев (если они существуют)
+            if (layer1) { layer1.setOpacity(value); }
+            if (layer2) { layer2.setOpacity(value); }
+        });
+    });
+</script>
     </body>
 </html>
