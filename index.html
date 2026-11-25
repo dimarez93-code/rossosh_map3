@@ -73,49 +73,31 @@
         <input type="range" id="opacity-slider" min="0" max="1" step="0.1" value="1" style="width: 150px; cursor: pointer;">
     </div>
 
-    <script>
-        // Ждем загрузки всех скриптов и карты
-        window.addEventListener('load', function() {
-            // Небольшая задержка, чтобы OpenLayers точно успел инициализироваться
-            setTimeout(function() {
-                var layer1 = typeof lyr_2_modified_1 !== 'undefined' ? lyr_2_modified_1 : null;
-                var layer2 = typeof lyr_gx2338Nr062_modifiedjpg_modified_2 !== 'undefined' ? lyr_gx2338Nr062_modifiedjpg_modified_2 : null;
-                var slider = document.getElementById('opacity-slider');
+   <script>
+    // Ждем полной загрузки страницы
+    window.addEventListener('load', function() {
+        // 1. Указываем ОБА слоя с аэроснимками
+        var layer1 = lyr_2_modified_1; 
+        var layer2 = lyr_gx2338Nr062_modifiedjpg_modified_2; 
 
-                if (slider && layer1 && layer2) {
-                    // Функция для обновления прозрачности
-                    function updateOpacity() {
-                        var value = parseFloat(slider.value);
-                        if (!isNaN(value)) {
-                            layer1.setOpacity(value);
-                            layer2.setOpacity(value);
-                            
-                            // Принудительно перерисовываем слои (важно для телефонов)
-                            layer1.changed();
-                            layer2.changed();
-                            
-                            // Если объект карты доступен, заставляем его перерисоваться
-                            if (typeof map !== 'undefined' && map.render) {
-                                map.render();
-                            }
-                        }
-                    }
-
-                    // Слушаем обычные события (для ПК)
-                    slider.addEventListener('input', updateOpacity);
-                    slider.addEventListener('change', updateOpacity);
-                    
-                    // Слушаем события тач-экрана (для телефонов)
-                    slider.addEventListener('touchmove', function(e) {
-                        // Останавливаем всплытие события, чтобы карта не двигалась
-                        e.stopPropagation(); 
-                        updateOpacity();
-                    }, {passive: false});
-                    
-                    slider.addEventListener('touchend', updateOpacity);
+        var slider = document.getElementById('opacity-slider');
+        
+        if (slider) {
+            slider.addEventListener('input', function(e) {
+                var value = parseFloat(e.target.value);
+                
+                // 2. Меняем прозрачность у обоих слоев
+                if (layer1) {
+                    layer1.setOpacity(value);
+                    layer1.changed(); // Заставляем карту перерисоваться
                 }
-            }, 500); // Задержка в полсекунды
-        });
-    </script>
+                if (layer2) {
+                    layer2.setOpacity(value);
+                    layer2.changed(); // Заставляем карту перерисоваться
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
