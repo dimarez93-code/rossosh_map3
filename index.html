@@ -89,22 +89,41 @@
 
 <script>
     window.addEventListener('load', function() {
-        // Используем ТОЧНЫЕ имена переменных из вашего layers.js
+        // Точные имена переменных из вашего layers.js
         var layer1 = lyr_2_modified_1;
         var layer2 = lyr_gx2338Nr062_modifiedjpg_modified_2;
 
         var slider = document.getElementById('opacity-slider');
         
         if (slider) {
+            // Используем 'input' для мгновенной реакции при перетаскивании
             slider.addEventListener('input', function(e) {
-                var value = e.target.valueAsNumber;
+                // parseFloat надежнее, чем valueAsNumber, на некоторых мобильных браузерах
+                var value = parseFloat(e.target.value);
                 
-                // Меняем прозрачность сразу у обоих снимков
-                if (layer1) { layer1.setOpacity(value); }
-                if (layer2) { layer2.setOpacity(value); }
+                if (!isNaN(value)) {
+                    // Меняем прозрачность
+                    if (layer1) { 
+                        layer1.setOpacity(value); 
+                        // Принудительно сообщаем карте, что слой изменился
+                        layer1.changed(); 
+                    }
+                    if (layer2) { 
+                        layer2.setOpacity(value); 
+                        layer2.changed(); 
+                    }
+                }
             });
-        } else {
-            console.log("Ползунок не найден в HTML");
+
+            // Дополнительная страховка для некоторых мобильных браузеров,
+            // которые могут некорректно обрабатывать 'input' при касании
+            slider.addEventListener('touchend', function(e) {
+                var value = parseFloat(e.target.value);
+                if (!isNaN(value)) {
+                    if (layer1) { layer1.setOpacity(value); layer1.changed(); }
+                    if (layer2) { layer2.setOpacity(value); layer2.changed(); }
+                }
+            });
         }
     });
 </script>
